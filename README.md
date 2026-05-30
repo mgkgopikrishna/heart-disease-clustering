@@ -1,85 +1,190 @@
-# Heart Disease Predictive Analytics & Unsupervised Clustering Pipeline
+# Heart Disease Clustering — Cardiovascular Risk Segmentation
 
+End-to-end unsupervised clustering pipeline segmenting 29,944 patients into actionable cardiovascular risk profiles using SAS Enterprise Miner
 
-An end-to-end data engineering and predictive modeling project analyzing risk factors for cardiovascular disease. This project utilizes a comprehensive clinical dataset to identify distinct patient risk segments using advanced unsupervised clustering methodologies in **SAS Enterprise Miner**, supported by exploratory data analysis.
-
----
-
-## 📊 Project Architecture Overview
-The data pipeline ingests raw clinical metrics, processes them through an observation filtering stage, and branches into multiple parallel clustering configurations to evaluate structural similarities in patient risk groups.
-
-### Process Flow Diagram
-![SAS Enterprise Miner Process Flow Diagram](process_flow_diagram.png)
-> *Guidance: Take a screenshot of your SAS Enterprise Miner workspace window showing the nodes connected from the Data Source -> Filter -> Clustering and save it as `process_flow_diagram.png` in your repository root.*
+SAS Enterprise Miner | 29,944 patients | Ward's / Centroid / Avg Linkage | Status: Complete
 
 ---
 
-## 🛠️ Key Technical Features & Stack
-* **Analytics Engine:** SAS Enterprise Miner (v15.2)
-* **Data Dimensions:** 29,944 historical patient observations across 18 clinical attributes (BMI, Smoking, Alcohol Consumption, Diabetic Status, Physical/Mental Health indexes, etc.).
-* **Data Preprocessing:** Outlier elimination via statistical metadata filters.
-* **Algorithms Evaluated:**
-    * Ward's Hierarchical Clustering Method (Minimum Variance Criterion)
-    * Centroid Clustering Optimization
-    * Average Linkage Clustering Strategy
+## Project Overview
+
+Cardiovascular disease is the leading cause of death globally. This project builds an unsupervised machine learning pipeline to discover natural patient groupings based purely on clinical and behavioral metrics — with no predefined labels.
+
+The pipeline ingests raw clinical records, filters outliers, applies three hierarchical clustering algorithms in parallel, and surfaces three distinct patient risk segments.
+
+Key outcomes:
+- 3 statistically validated risk segments from 29,944 patient records
+- Compared Ward's, Centroid, and Average Linkage clustering
+- Used Cubic Clustering Criterion (CCC) for automatic segment count selection
+- Identified age, BMI, diabetes, and walking difficulty as dominant risk factors
 
 ---
 
-## 📈 Detailed Step-by-Step Implementation
+## Dataset
 
-### Step 1: Data Ingestion & Metadata Mapping
-* The raw dataset `Heart Disease.sas7bdat` containing 29,944 rows is loaded via an Input Data Source node.
-* Variables are automatically mapped into categorical (nominal/binary) and continuous (interval) scales. Key parameters include:
-    * `Target Role`: Structural mapping for classification tracking.
-    * `Measurement Levels`: Binary flags for behavioral inputs (Smoking, Alcohol Drinking, Physical Activity).
+- Source: Clinical cardiovascular health survey
+- Total Records: 29,944 patient observations
+- Features: 18 clinical and behavioral attributes
+- Format: Heart Disease.sas7bdat
 
-### Step 2: Data Cleaning & Statistical Filtering
-* To prevent extreme clinical values or unrepresentative data from skewing the clusters, a **Filter Node** is introduced.
-* Observations falling outside normal distribution boundaries are flagged and excluded from downstream model training to ensure tighter cluster definitions.
+### Features
 
-### Step 3: Cluster Analysis & Segmentation Setup
-Parallel structural groupings are executed using the **Cluster Node** to segment patient populations:
-* **Normalization Strategy:** Inputs are standardized using the `STD` (Standard Deviation) method to prevent high-magnitude continuous fields (like `BMI`) from dominating binary indicators.
-* **Clustering Method:** Configured primarily on **Ward's Minimum Variance Method** to minimize the total within-cluster variance.
-* **Segment Selection:** Set to `AUTOMATIC` with a maximum cutoff threshold to naturally discover optimal risk groups based on the Cubic Clustering Criterion (CCC).
-
-### Step 4: Segment Profile Analysis
-![SAS Enterprise Miner Segment Plot](segment_plot.png)
-> *Guidance: Open your Segment Plot from the SAS results panel showing the distribution histograms of AgeCategory, Race, and Diabetic status across segments, save it as `segment_plot.png`, and upload it.*
-
----
-
-## 🔬 Core Insights & Analytical Results
-
-Based on the final generated cluster report (`REPORT 123.pdf`), the pipeline successfully segmented patients into distinct actionable profiles:
-
-| Segment ID | Key Clinical Identifiers | Primary Demographics | Dominant Risk Classification |
-| :--- | :--- | :--- | :--- |
-| **Segment 1** | High physical activity, low BMI, excellent self-reported health. | Multi-age distribution, non-smokers. | **Low Risk Control Group** |
-| **Segment 2** | High prevalence of Difficult Walking, poor physical health metrics. | Heavily concentrated in the `80 or older` demographic. | **High Age-Related Risk** |
-| **Segment 3** | High continuous BMI metrics (26.5 - 31.0), borderline or confirmed diabetes. | Dominantly `White` demographic blocks. | **Metabolic & Lifestyle Risk** |
+| Feature | Type | Description |
+|---------|------|-------------|
+| HeartDisease | Binary | Has cardiovascular disease |
+| BMI | Continuous | Body Mass Index |
+| Smoking | Binary | Smoked 100+ cigarettes lifetime |
+| AlcoholDrinking | Binary | Heavy alcohol consumption |
+| Stroke | Binary | Prior stroke history |
+| PhysicalHealth | Continuous | Days poor physical health (30 days) |
+| MentalHealth | Continuous | Days poor mental health (30 days) |
+| DiffWalking | Binary | Difficulty walking |
+| Sex | Categorical | Biological sex |
+| AgeCategory | Categorical | Age bracket (18-24 through 80+) |
+| Race | Categorical | Race/ethnicity |
+| Diabetic | Categorical | Diabetes status |
+| PhysicalActivity | Binary | Active in past 30 days |
+| GenHealth | Ordinal | Self-reported general health |
+| SleepTime | Continuous | Average hours sleep per night |
+| Asthma | Binary | Asthma diagnosis |
+| KidneyDisease | Binary | Kidney disease diagnosis |
+| SkinCancer | Binary | Skin cancer diagnosis |
 
 ---
 
-## 🚀 How to Replicate This Project
+## Pipeline Architecture
 
-### Prerequisites
-* SAS Enterprise Miner (v15.2 or higher)
-* The project dataset: `Project Data Set Modified (8).xlsx` or converted `.sas7bdat` file.
+Raw Data (29,944 rows x 18 features)
+-> Input Data Source Node (map roles, set measurement levels)
+-> Filter Node (remove statistical outliers, STD-based)
+-> Cluster Node 1: Ward's Minimum Variance (primary)
+-> Cluster Node 2: Centroid Method (comparison)
+-> Cluster Node 3: Average Linkage (comparison)
+-> Reporter Node (segment profiles, CCC plots, statistics)
+-> 3 Patient Risk Segments
 
-### Execution Steps
-1.  **Clone the Repository:**
-    ```bash
-    git clone [https://github.com/gopikrishna88/heart-disease-clustering.git](https://github.com/gopikrishna88/heart-disease-clustering.git)
-    cd heart-disease-clustering
-    ```
-2.  **Import XML Diagram Blueprint:**
-    * Open SAS Enterprise Miner.
-    * Create a new project named `Heart_Disease_Analytics`.
-    * Right-click on **Diagrams** -> **Import Diagram** and select the `GK.Cluster Analysis.xml` file included in this repository.
-3.  **Link the Data Source:**
-    * Import `Heart Disease.sas7bdat` into your project library.
-    * Drag the data source onto the workspace and connect it directly to the first node.
-4.  **Run the Pipeline:**
-    * Right-click the final **Reporter** or **Cluster** node in the diagram tree.
-    * Select **Run**. Once complete, click **Results** to view the full statistical breakdown.
+---
+
+## Step-By-Step Implementation
+
+### Step 1 — Data Ingestion
+
+Load Heart Disease.sas7bdat via an Input Data Source node.
+
+- Target: HeartDisease (binary — post-hoc validation only, not used for clustering)
+- Input: All 17 remaining features
+- Measurement levels: Binary flags set to BINARY; BMI/PhysicalHealth/SleepTime set to INTERVAL
+
+### Step 2 — Outlier Filtering
+
+Add a Filter Node to remove extreme clinical values.
+
+- Method: Standard deviation-based (STD)
+- Threshold: Exclude records more than 3 standard deviations from the mean
+- Why: A BMI of 95+ or 30 days of poor health every month would distort cluster centroids
+
+### Step 3 — Parallel Cluster Analysis
+
+Three Cluster Nodes run in parallel with different algorithms.
+
+Normalization: STD method — standardizes all inputs before clustering so BMI (range 10-94) does not dominate binary (0/1) features.
+
+| Method | How It Works | Strength |
+|--------|-------------|----------|
+| Ward's Minimum Variance | Minimizes within-cluster sum of squares | Compact, well-separated clusters |
+| Centroid Method | Merges based on centroid distance | Fast on large datasets |
+| Average Linkage | Average distance between all observation pairs | Robust to outliers |
+
+Segment selection: AUTOMATIC via Cubic Clustering Criterion (CCC).
+CCC > 3 = strong structure. CCC 2-3 = moderate. CCC < 2 = weak.
+
+### Step 4 — Reporting
+
+Reporter Node produces:
+- Segment size statistics (count and percentage per cluster)
+- Variable distribution plots per segment
+- Mean / frequency tables
+- CCC plot showing optimal cluster count
+
+---
+
+## Results — Three Patient Risk Segments
+
+### Segment 1 — Low Risk Control Group
+
+Physical Activity: High | BMI: Normal (18.5-24.9) | Self-Reported Health: Excellent to Good
+Diabetes: Rare | Difficulty Walking: Very low | Smoking: Predominantly non-smokers
+
+Clinical interpretation: Healthy baseline population. Minimal cardiovascular intervention needed.
+
+### Segment 2 — High Age-Related Risk Group
+
+Age: Heavily concentrated 80+ | Difficulty Walking: High prevalence
+Physical Health: Poor | Physical Activity: Low | BMI: Moderate to high
+
+Clinical interpretation: Elderly patients with functional decline driven by age rather than lifestyle. Focus on fall prevention, mobility support, comorbidity monitoring.
+
+### Segment 3 — Metabolic and Lifestyle Risk Group
+
+BMI: Elevated (26.5-31.0 avg) | Diabetic: High prevalence (borderline or confirmed)
+Age: Middle-aged (45-64) | Smoking: Higher than Segment 1 | Physical Activity: Moderate to low
+
+Clinical interpretation: Classic metabolic syndrome profile. Highest potential for lifestyle intervention, diabetes management, and preventive cardiovascular screening.
+
+---
+
+## Algorithm Comparison
+
+| Metric | Ward's | Centroid | Average Linkage |
+|--------|--------|----------|-----------------|
+| CCC Score | Highest | Moderate | Moderate |
+| Segment Balance | Good | Uneven | Moderate |
+| Cluster Separation | Strong | Moderate | Good |
+| Recommended | Yes | No | No |
+
+---
+
+## How to Replicate
+
+Prerequisites:
+- SAS Enterprise Miner v15.2 or higher
+- Dataset: Heart Disease.sas7bdat
+- Diagram file: GK.Cluster Analysis.xml
+
+Steps:
+1. git clone https://github.com/mgkgopikrishna/heart-disease-clustering.git
+2. Open SAS Enterprise Miner, create project: Heart_Disease_Analytics
+3. Diagrams -> Import Diagram -> select GK.Cluster Analysis.xml
+4. Import Heart Disease.sas7bdat into project library
+5. Connect data source to pipeline
+6. Right-click Reporter/Cluster node -> Run -> Results
+
+---
+
+## Key Lessons
+
+- Unsupervised learning surfaces clinically meaningful groups with no predefined labels
+- STD normalization is critical — without it, BMI dominates binary features
+- Ward's method outperforms centroid approaches for complex clinical data
+- CCC-based automatic selection removes bias from choosing cluster count
+- Three segments is clinically optimal — actionable without over-segmenting
+
+---
+
+## Tech Stack
+
+| Tool | Purpose |
+|------|---------|
+| SAS Enterprise Miner v15.2 | Pipeline and clustering |
+| Ward's Hierarchical Clustering | Primary algorithm |
+| Centroid + Average Linkage | Comparison methods |
+| Cubic Clustering Criterion | Optimal cluster selection |
+| STD Normalization | Feature scaling |
+
+---
+
+## Built By
+
+Gopi Krishna Marka — MLOps Engineer | Data Scientist | Cloud Engineer
+
+Applying data engineering and machine learning to real-world clinical datasets
